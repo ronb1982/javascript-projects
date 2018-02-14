@@ -277,7 +277,7 @@ console.log(ages.find(cur => cur >= 18));
 
 //////////////////////////////////////////////////
 // Lecture: Spread operator
-
+/*
 function addFourAges(a, b, c, d) {
     return a + b + c + d;
 }
@@ -307,3 +307,375 @@ const all = [h, ...boxes];
 console.log(all);
 
 Array.from(all).forEach(cur => cur.style.color = 'purple');
+*/
+////////////////////////////////////
+// Lecture: Rest parameters
+/*
+// ES5
+function isFullAge5() {
+    //console.log(arguments);
+    var argsArr = Array.prototype.slice.call(arguments);
+
+    argsArr.forEach(function(cur) {
+        console.log((2018 - cur) >= 18);
+    });
+}
+
+//isFullAge5(1990, 2001, 1965);
+//isFullAge5(1990, 2001, 1965, 2016, 1987);
+
+// ES6
+function isFullAge6(...years) {
+    years.forEach(cur => console.log((2018 - cur) >= 18));
+}
+
+isFullAge6(1990, 2001, 1965);
+isFullAge6(1990, 2001, 1965, 2016, 1987);
+
+
+// ES5
+function isFullAge5(limit) {
+    //console.log(arguments);
+    var argsArr = Array.prototype.slice.call(arguments, 1);
+    console.log(argsArr);
+    console.log(limit);
+    argsArr.forEach(function(cur) {
+        console.log((2018 - cur) >= limit);
+    });
+}
+
+isFullAge5(21, 1990, 1999, 1965);
+//isFullAge5(1990, 2001, 1965, 2016, 1987);
+
+// ES6
+function isFullAge6(limit, ...years) {
+    years.forEach(cur => console.log((2018 - cur) >= limit));
+}
+
+isFullAge6(16, 1990, 2001, 1965);
+isFullAge6(16, 1990, 2001, 1965, 2016, 1987);
+*/
+
+//////////////////////////////////////////////
+// Lecture: Default parameters
+/*
+// ES5
+function SmithPerson(firstName, yearOfBirth, lastName, nationality) {
+
+    // Default vars
+    lastName === undefined ? lastName = 'Smith' : lastName = lastName;
+    nationality === undefined ? nationality = 'american' : nationality = nationality;
+
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.yearOfBirth = yearOfBirth;
+    this.nationality = nationality;
+}
+
+var john = new SmithPerson('John', 1990);
+console.log(john);
+
+var emily = new SmithPerson('Emily', 1983, 'Diaz', 'spanish');
+console.log(emily);
+
+// ES6
+function SmithPerson(firstName, yearOfBirth, lastName = 'Smith',
+    nationality = 'american') {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.yearOfBirth = yearOfBirth;
+    this.nationality = nationality;
+}
+var john = new SmithPerson('John', 1990);
+console.log(john);
+
+var emily = new SmithPerson('Emily', 1983, 'Diaz', 'spanish');
+console.log(emily);
+*/
+
+///////////////////////////////////////////
+// Lecture: Maps
+/*
+// New to ES6 - Maps
+const question = new Map();
+question.set('question', 'What is the official name of the latest major JavaScrtipt version?');
+question.set(1, 'ES5');
+question.set(2, 'ES6');
+question.set(3, 'ES2015');
+question.set(4, 'ES7');
+question.set('correct', 3);
+question.set(true, 'Correct answer :D');
+question.set(false, 'Wrong, please try again!');
+
+/*
+console.log(question);
+
+console.log(question.get('question'));
+console.log(question.size);
+
+if (question.has(4)) {
+    //question.delete(4);
+    console.log('Answer 4 is here.');
+}
+
+//question.clear();
+
+// Loop through a Map
+//question.forEach((value, key) => console.log(`This is ${key}, and it's set to ${value}.`));
+
+// Iterate using for...of loop
+for (let [key, value] of question.entries()) {
+    if (typeof(key) === 'number') {
+        console.log(`Answer ${key}: ${value}`);
+    }
+}
+
+const ans = parseInt(prompt('Write the correct answer'));
+console.log(question.get(ans === question.get('correct')));
+*/
+
+
+/////////////////////////////////////////////
+// Lecture: Classes
+/*
+// ES5
+var Person5 = function(name, yearOfBirth, job) {
+    this.name = name;
+    this.yearOfBirth = yearOfBirth;
+    this.job = job;
+};
+
+Person5.prototype.calculateAge = function() {
+    var age = new Date().getFullYear() - this.yearOfBirth;
+    console.log(age);
+};
+
+var john5 = new Person5('John', 1990, 'teacher');
+
+
+// ES6
+class Person6 {
+    constructor (name, yearOfBirth, job) {
+        this.name = name;
+        this.yearOfBirth = yearOfBirth;
+        this.job = job;
+    }
+
+    calculateAge() {
+        var age = new Date().getFullYear() - this.yearOfBirth;
+        console.log(age);
+    }
+
+    static greeting() {
+        console.log('Hey there!');
+    }
+}
+
+var john6 = new Person6('John', 1990, 'teacher');
+john6.calculateAge();
+
+Person6.greeting();
+*/
+
+////////////////////////////////////////
+// Lecture: Classes and subclasses
+/*
+// ES5
+var Person5 = function(name, yearOfBirth, job) {
+    this.name = name;
+    this.yearOfBirth = yearOfBirth;
+    this.job = job;
+};
+
+Person5.prototype.calculateAge = function() {
+    var age = new Date().getFullYear() - this.yearOfBirth;
+    console.log(age);
+};
+
+var Athlete5 = function(name, yearOfBirth, job, olympicGames, medals) {
+    Person5.call(this, name, yearOfBirth, job); // call parent class
+    this.olympicGames = olympicGames;
+    this.medals = medals;
+};
+
+// Set prototype to establish inheritance prototype chain
+Athlete5.prototype = Object.create(Person5.prototype);
+
+Athlete5.prototype.wonMedal = function() {
+    this.medals++;
+    console.log(this.medals);
+};
+
+var johnAthlete5 = new Athlete5('John', 1990, 'swimmer', 3, 10);
+
+console.log(johnAthlete5);
+johnAthlete5.calculateAge();
+
+johnAthlete5.wonMedal();
+*/
+/*
+// ES6
+class Person6 {
+    constructor (name, yearOfBirth, job) {
+        this.name = name;
+        this.yearOfBirth = yearOfBirth;
+        this.job = job;
+    }
+
+    calculateAge() {
+        var age = new Date().getFullYear() - this.yearOfBirth;
+        console.log(age);
+    }
+}
+
+class Athlete6 extends Person6 {
+    constructor (name, yearOfBirth, job, olympicGames, medals) {
+        super(name, yearOfBirth, job);
+        this.olympicGames = olympicGames;
+        this.medals = medals;
+    }
+
+    wonMedal() {
+        this.medals++;
+        console.log(this.medals);
+    }
+}
+
+const johnAthlete6 = new Athlete6('John', 1990, 'swimmer', 3, 10);
+
+johnAthlete6.wonMedal();
+johnAthlete6.calculateAge();
+*/
+
+//////////////////////////////////////////
+// Coding challenge 5
+class Town {
+    constructor(...attr) {
+        [this.name, this.parks, this.streets] = attr;
+    }
+
+    displayReport() {
+        console.log(`----- ${this.name.toUpperCase()} TOWN REPORT -----`);
+        this.getParksReport();
+        this.getStreetsReport();
+    }
+
+    getParksReport() {
+        if (this.parks) {
+            console.log('\n============================\n');
+            console.log(`Now displaying park info for ${this.name}:`);
+            this.parks.forEach(p => p.showData());
+        }
+    }
+
+    getStreetsReport() {
+        if (this.streets) {
+            console.log('\n============================\n');
+            console.log(`Now displaying street info for ${this.name}:`);
+            this.streets.forEach(s => s.showData());
+        }
+    }
+}
+
+class Construction {
+    constructor(...attr) {
+        [this.name, this.buildYear, this.type] = attr;
+    }
+
+    showData() {
+        console.log('\n============================\n');
+        console.log(`Construction type: ${this.type}`);
+        console.log(`Name: ${this.name}`);
+        console.log(`Year built: ${this.buildYear}`);
+        console.log(`Age (in years): ${this.getAge()}`);
+    }
+
+    getAge() {
+        return new Date().getFullYear() - this.buildYear;
+    }
+}
+
+class Park extends Construction {
+    constructor(...attr) {
+        super(attr['name'], attr['buildYear'], 'Park');
+        [this.name, this.buildYear, this.numTrees = 0, this.area = 0] = attr;
+    }
+
+    getTreeDensity() {
+        return (this.numTrees / this.area).toFixed(2);
+    }
+
+    showData() {
+        super.showData();
+        console.log(`Tree count: ${this.numTrees}`);
+        console.log(`Area (in size): ${this.area}`);
+        console.log(`Tree density: ${this.getTreeDensity()}`);
+    }
+}
+
+class Street extends Construction {
+    constructor(...attr) {
+        super(attr['name'], attr['buildYear'], 'Street');
+        [this.name, this.buildYear, this.length = 0] = attr;
+        this.setSizeClassification();
+    }
+
+    setSizeClassification() {
+        let length = this.length;
+
+        if (length > 0 && length <= 250) {
+            this.sizeClassification = 'tiny';
+        } else if (length > 250 && length <= 500) {
+            this.sizeClassification = 'small';
+        } else if (length > 1000 && length <= 2500) {
+            this.sizeClassification = 'big';
+        } else if (length > 2500) {
+            this.sizeClassification = 'huge';
+        } else {
+            this.sizeClassification = 'normal';
+        }
+    }
+
+    showData() {
+        super.showData();
+        console.log(`Street length: ${this.length}`);
+        console.log(`Size classification: ${this.sizeClassification}`);
+    }
+}
+
+var townMap = new Map();
+
+// Town: Boeblingen
+const townBoeblingen = new Town(
+    'Boeblingen',
+    [
+        new Park('See', 1865, 320, 166.35),
+        new Park('Tueringen', 1984, 134, 212)
+    ],
+    [
+        new Street('Herdweg', 1944, 325),
+        new Street('Esslingerstrasse', 2001, 500),
+        new Street('Theodorheussstrasse', 1855, 1034),
+        new Street('Kleinhaus', 2008, 3530),
+        new Street('Aufdenweg', 1734, 10024),
+        new Street('Fischer', 1994, 1345)
+    ]
+);
+
+// Town: Rego Park
+const townRegoPark = new Town(
+    'Rego Park',
+    [
+        new Park('Rego Park Municipal Park', 1975, 320, 166.35)
+    ],
+    [
+        new Street('Junction Blvd.', 1945, 489),
+        new Street('Queens Blvd.', 2001, 5030),
+        new Street('62nd Drive', 2010, 231),
+        new Street('Austin Blvd.', 1898, 3530)
+    ]
+);
+
+townMap.set(townBoeblingen.name, townBoeblingen);
+townMap.set(townRegoPark.name, townRegoPark);
+townMap.forEach((value, key) => value.displayReport());
