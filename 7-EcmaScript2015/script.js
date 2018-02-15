@@ -549,133 +549,145 @@ johnAthlete6.calculateAge();
 
 //////////////////////////////////////////
 // Coding challenge 5
-class Town {
-    constructor(...attr) {
-        [this.name, this.parks, this.streets] = attr;
+{
+    class Town {
+        constructor(...attr) {
+            [this.name, this.parks, this.streets] = attr;
+        }
     }
 
-    displayReport() {
-        console.log(`----- ${this.name.toUpperCase()} TOWN REPORT -----`);
-        this.getParksReport();
-        this.getStreetsReport();
+    class Construction {
+        constructor(...attr) {
+            [this.name, this.buildYear, this.type] = attr;
+        }
+
+        showData() {
+            console.log('\n============================\n');
+            console.log(`Construction type: ${this.type}`);
+            console.log(`Name: ${this.name}`);
+            console.log(`Year built: ${this.buildYear}`);
+            console.log(`Age (in years): ${this.getAge()}`);
+        }
+
+        getAge() {
+            return new Date().getFullYear() - this.buildYear;
+        }
     }
 
-    getParksReport() {
-        if (this.parks) {
+    class Park extends Construction {
+        constructor(...attr) {
+            super(attr['name'], attr['buildYear'], 'Park');
+            [this.name, this.buildYear, this.numTrees = 0, this.area = 0] = attr;
+        }
+
+        getTreeDensity() {
+            return (this.numTrees / this.area).toFixed(2);
+        }
+
+        showData() {
+            super.showData();
+            console.log(`Tree count: ${this.numTrees}`);
+            console.log(`Area (in size): ${this.area}`);
+            console.log(`Tree density: ${this.getTreeDensity()}`);
+        }
+    }
+
+    class Street extends Construction {
+        constructor(...attr) {
+            super(attr['name'], attr['buildYear'], 'Street');
+            [this.name, this.buildYear, this.length = 0] = attr;
+            this.setSizeClassification();
+        }
+
+        setSizeClassification() {
+            let length = this.length;
+
+            if (length > 0 && length <= 250) {
+                this.sizeClassification = 'tiny';
+            } else if (length > 250 && length <= 500) {
+                this.sizeClassification = 'small';
+            } else if (length > 1000 && length <= 2500) {
+                this.sizeClassification = 'big';
+            } else if (length > 2500) {
+                this.sizeClassification = 'huge';
+            } else {
+                this.sizeClassification = 'normal';
+            }
+        }
+
+        showData() {
+            super.showData();
+            console.log(`Street length: ${this.length}`);
+            console.log(`Size classification: ${this.sizeClassification}`);
+        }
+    }
+
+    var townMap = new Map();
+
+    // Town: Boeblingen
+    const townBoeblingen = new Town(
+        'Boeblingen',
+        [
+            new Park('See', 1865, 3245, 166.35),
+            new Park('Tueringen', 1984, 1204, 212)
+        ],
+        [
+            new Street('Herdweg', 1944, 325),
+            new Street('Esslingerstrasse', 2001, 500),
+            new Street('Theodorheussstrasse', 1855, 1034),
+            new Street('Kleinhaus', 2008, 3530),
+            new Street('Aufdenweg', 1734, 10024),
+            new Street('Fischer', 1994, 1345)
+        ]
+    );
+
+    // Town: Rego Park
+    const townRegoPark = new Town(
+        'Rego Park',
+        [
+            new Park('Rego Park Municipal Park', 1975, 302, 166.35),
+            new Park('Flushing Meadows Park', 1922, 1435, 835.24)
+        ],
+        [
+            new Street('Junction Blvd.', 1945, 489),
+            new Street('Queens Blvd.', 2001, 5030),
+            new Street('62nd Drive', 2010, 231),
+            new Street('Austin St.', 1898, 3530)
+        ]
+    );
+
+    townMap.set(townBoeblingen.name, townBoeblingen);
+    townMap.set(townRegoPark.name, townRegoPark);
+
+    townMap.forEach((value, key) => {
+        displayReport(value.name, value.parks, value.streets);
+        console.log(`\n\nParks in ${key} with more than 1000 trees:`);
+        value.parks.forEach(p => {
+            if (p.numTrees >= 1000) {
+                console.log(`-- ${p.name}`);
+            }
+        });
+    });
+
+    function displayReport(townName, parks, streets) {
+        console.log(`----- ${townName.toUpperCase()} TOWN REPORT -----`);
+        getParksReport(parks);
+        getStreetsReport(streets);
+    }
+
+    function getParksReport(parks) {
+        if (parks) {
             console.log('\n============================\n');
             console.log(`Now displaying park info for ${this.name}:`);
-            this.parks.forEach(p => p.showData());
+            parks.forEach(p => p.showData());
         }
     }
 
-    getStreetsReport() {
-        if (this.streets) {
+    function getStreetsReport(streets) {
+        if (streets) {
             console.log('\n============================\n');
             console.log(`Now displaying street info for ${this.name}:`);
-            this.streets.forEach(s => s.showData());
+            streets.forEach(s => s.showData());
         }
     }
 }
-
-class Construction {
-    constructor(...attr) {
-        [this.name, this.buildYear, this.type] = attr;
-    }
-
-    showData() {
-        console.log('\n============================\n');
-        console.log(`Construction type: ${this.type}`);
-        console.log(`Name: ${this.name}`);
-        console.log(`Year built: ${this.buildYear}`);
-        console.log(`Age (in years): ${this.getAge()}`);
-    }
-
-    getAge() {
-        return new Date().getFullYear() - this.buildYear;
-    }
-}
-
-class Park extends Construction {
-    constructor(...attr) {
-        super(attr['name'], attr['buildYear'], 'Park');
-        [this.name, this.buildYear, this.numTrees = 0, this.area = 0] = attr;
-    }
-
-    getTreeDensity() {
-        return (this.numTrees / this.area).toFixed(2);
-    }
-
-    showData() {
-        super.showData();
-        console.log(`Tree count: ${this.numTrees}`);
-        console.log(`Area (in size): ${this.area}`);
-        console.log(`Tree density: ${this.getTreeDensity()}`);
-    }
-}
-
-class Street extends Construction {
-    constructor(...attr) {
-        super(attr['name'], attr['buildYear'], 'Street');
-        [this.name, this.buildYear, this.length = 0] = attr;
-        this.setSizeClassification();
-    }
-
-    setSizeClassification() {
-        let length = this.length;
-
-        if (length > 0 && length <= 250) {
-            this.sizeClassification = 'tiny';
-        } else if (length > 250 && length <= 500) {
-            this.sizeClassification = 'small';
-        } else if (length > 1000 && length <= 2500) {
-            this.sizeClassification = 'big';
-        } else if (length > 2500) {
-            this.sizeClassification = 'huge';
-        } else {
-            this.sizeClassification = 'normal';
-        }
-    }
-
-    showData() {
-        super.showData();
-        console.log(`Street length: ${this.length}`);
-        console.log(`Size classification: ${this.sizeClassification}`);
-    }
-}
-
-var townMap = new Map();
-
-// Town: Boeblingen
-const townBoeblingen = new Town(
-    'Boeblingen',
-    [
-        new Park('See', 1865, 320, 166.35),
-        new Park('Tueringen', 1984, 134, 212)
-    ],
-    [
-        new Street('Herdweg', 1944, 325),
-        new Street('Esslingerstrasse', 2001, 500),
-        new Street('Theodorheussstrasse', 1855, 1034),
-        new Street('Kleinhaus', 2008, 3530),
-        new Street('Aufdenweg', 1734, 10024),
-        new Street('Fischer', 1994, 1345)
-    ]
-);
-
-// Town: Rego Park
-const townRegoPark = new Town(
-    'Rego Park',
-    [
-        new Park('Rego Park Municipal Park', 1975, 320, 166.35)
-    ],
-    [
-        new Street('Junction Blvd.', 1945, 489),
-        new Street('Queens Blvd.', 2001, 5030),
-        new Street('62nd Drive', 2010, 231),
-        new Street('Austin Blvd.', 1898, 3530)
-    ]
-);
-
-townMap.set(townBoeblingen.name, townBoeblingen);
-townMap.set(townRegoPark.name, townRegoPark);
-townMap.forEach((value, key) => value.displayReport());
