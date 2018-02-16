@@ -166,14 +166,6 @@ var controller = (function(soundCtrl, UICtrl) {
                 }
 
             }
-
-            function addEventListenerMulti(ele, eventNames, listenerCallback) {
-                var events = eventNames.split(' ');
-
-                for (var i = 0; i < events.length; i++) {
-                    ele.addEventListener(events[i], listenerCallback);
-                }
-            }
         },
         testing: function() {
             return keyCodes;
