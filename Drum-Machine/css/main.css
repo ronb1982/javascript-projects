@@ -38,7 +38,6 @@ section {
 }
 
 .big__key {
-    background-color: white;
     opacity: 0.6;
     display: table-cell;
     border: 2px solid black;
@@ -52,10 +51,36 @@ section {
     box-shadow:         2px 2px 10px 2px black;
 }
 
+.big__key--inactive {
+    background-color: white;
+}
+
+.big__key--active {
+    background-color: red;
+    color: white;
+}
+
 .big__key--letter {
     font-size: 50px;
 }
 
 .key__description {
     font-family: Raleway;
+}
+
+.btn__loop-stop {
+    color: white;
+    background-color: #161616;
+    font-family: "Permanent Marker";
+    border: none;
+    height: 30px;
+    width: 100px;
+    position: relative;
+    float: right;
+    margin-top: 5px;
+    margin-right: 55px;
+}
+
+.btn__loop-stop:hover {
+    background-color: red;
 }

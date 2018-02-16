@@ -1,19 +1,58 @@
 var soundController = (function() {
-    var fileLibrary, sound;
+    var fileLibrary;
 
     fileLibrary = {
-        'Q': 'drum_d.wav',
-        'W': '808drum_w.wav',
-        'E': '808snare_e.wav',
-        'A': 'hihat_a.wav'
+        'Q': ['drum_d.wav', false],
+        'W': ['808drum_w.wav', false],
+        'E': ['808snare_e.wav', false],
+        'A': ['bellsloop85_a.wav', true],
+        'S': ['playboy140_s.wav', true]
+    };
+
+    var removeExistingAudio = function(idSelector) {
+        var existingEle = document.getElementById(idSelector);
+
+        if (existingEle) {
+            existingEle.parentNode.removeChild(existingEle);
+        }
     };
 
     return {
-        playFile: function(keyChar) {
+        playFile: function(keyChar, DOM) {
+            var sound, html, newHtml, element;
+
             for (var item in fileLibrary) {
                 if (fileLibrary.hasOwnProperty(keyChar.toUpperCase())) {
-                    sound = new Audio(fileLibrary[keyChar]);
-                    sound.volume = 0.7;
+
+                    var fileArr = fileLibrary[keyChar];
+
+                    if (fileArr) {
+                        if (fileArr[1]) {
+                            // Remove existing audio element
+                            removeExistingAudio(DOM.loopAudioElement);
+
+                            html = '<audio id="%id%" src="%s%" type="audio/wav"></audio>';
+                            newHtml = html.replace('%id%', DOM.loopAudioElement);
+                            newHtml = newHtml.replace('%s%', fileLibrary[keyChar][0]);
+                            console.log(newHtml);
+
+                            document.querySelector(DOM.container).insertAdjacentHTML('afterbegin', newHtml);
+                            sound = document.getElementById(DOM.loopAudioElement);
+
+                            sound.addEventListener('timeupdate', function(){
+                                var buffer = .50;
+                                if (this.currentTime > this.duration - buffer) {
+                                    this.currentTime = 0;
+                                    this.play();
+                                }
+                            }, false);
+                        } else {
+                            // Play a single hit
+                            sound = new Audio(fileLibrary[keyChar][0]);
+                            sound.volume = 0.7;
+                        }
+                    }
+
                     sound.play();
                     break;
                 }
@@ -27,8 +66,10 @@ var UIController = (function() {
     var DOMStrings = {
         bigKeyBtn: '.big__key',
         bigKeyIdPrefix: '#big-key-',
+        container: '.container',
         dataKeydownCode: 'data-keydown',
-        dataKeypressCode: 'data-keypress'
+        dataKeypressCode: 'data-keypress',
+        loopAudioElement: 'loop-track'
     };
 
     var getKeyCharacter = function(idSelector) {
@@ -42,17 +83,20 @@ var UIController = (function() {
     };
 
     var getTarget = function(arg) {
-        var keyChar, targetID;
+        var keyChar, target, targetID;
 
         if (typeof arg === 'object') {
-            var target = arg.target;
+            target = arg.target;
 
             try {
-                while ((target = target.parentNode) && !target.getAttribute(DOMStrings.bigKeyBtn)) {
-                    if (target.getAttribute('class') === DOMStrings.bigKeyBtn.substr(1)) {
-                        targetID = target.id;
-                        break;
+                while (!targetID) {
+                    for (var c of target.classList) {
+                        if (c === DOMStrings.bigKeyBtn.substr(1)) {
+                            targetID = target.id;
+                            break;
+                        }
                     }
+                    if (!targetID) target = target.parentNode;
                 }
                 keyChar = getKeyCharacter(target.id);
             } catch (e) {
@@ -81,12 +125,12 @@ var UIController = (function() {
         },
         toggleBGColor: function(target, eventType) {
             var targetEle = document.getElementById(target.id);
-            if (eventType === 'mousedown' || eventType === 'keydown')  {
-                targetEle.style.backgroundColor = 'red';
-                targetEle.style.color = 'white';
+            if (eventType === 'mousedown' || eventType === 'keydown') {
+                targetEle.classList.add('big__key--active');
+                targetEle.classList.remove('big__key--inactive');
             } else if (eventType === 'mouseup' || eventType === 'keyup') {
-                targetEle.style.backgroundColor = 'white';
-                targetEle.style.color = 'black';
+                targetEle.classList.add('big__key--inactive');
+                targetEle.classList.remove('big__key--active');
             }
         }
     }
@@ -112,7 +156,7 @@ var controller = (function(soundCtrl, UICtrl) {
 
     var triggerBigKeyEvents = function(e) {
         var keyCode, target;
-
+        console.log(e.key);
         if (e.key) {
             target = UICtrl.getTargetElement(e.key.toUpperCase());
         } else {
@@ -120,7 +164,7 @@ var controller = (function(soundCtrl, UICtrl) {
         }
 
         if (e.type === 'click' || (e.type === 'keypress' && !hasEventFired)) {
-            soundCtrl.playFile(target.key);
+            soundCtrl.playFile(target.key, DOM);
             //hasEventFired = true; // Disable to allow repeated notes
         }
 
