@@ -1,19 +1,22 @@
 var soundController = (function() {
-    var library, sound;
+    var fileLibrary, sound;
 
-    library = {
-        dKey: 'drum_d.wav'
+    fileLibrary = {
+        'Q': 'drum_d.wav',
+        'W': '808drum_w.wav',
+        'E': '808snare_e.wav',
+        'A': 'hihat_a.wav'
     };
 
     return {
-        playSound: function(key) {
-            switch (key.toLowerCase()) {
-                case "d":
-                    sound = new Audio(library.dKey);
+        playFile: function(keyChar) {
+            for (var item in fileLibrary) {
+                if (fileLibrary.hasOwnProperty(keyChar.toUpperCase())) {
+                    sound = new Audio(fileLibrary[keyChar]);
+                    sound.volume = 0.7;
                     sound.play();
                     break;
-                default:
-                    console.log('No sound played.');
+                }
             }
         }
     }
@@ -23,64 +26,157 @@ var soundController = (function() {
 var UIController = (function() {
     var DOMStrings = {
         bigKeyBtn: '.big__key',
-        bigLetterLabel: '.big__key--letter'
+        bigKeyIdPrefix: '#big-key-',
+        dataKeydownCode: 'data-keydown',
+        dataKeypressCode: 'data-keypress'
+    };
+
+    var getKeyCharacter = function(idSelector) {
+        var keyChar;
+        if (idSelector) {
+            var idParts = idSelector.split('-');
+            keyChar = idParts[2];
+            return keyChar;
+        }
+        return '';
+    };
+
+    var getTarget = function(arg) {
+        var keyChar, targetID;
+
+        if (typeof arg === 'object') {
+            var target = arg.target;
+
+            try {
+                while ((target = target.parentNode) && !target.getAttribute(DOMStrings.bigKeyBtn)) {
+                    if (target.getAttribute('class') === DOMStrings.bigKeyBtn.substr(1)) {
+                        targetID = target.id;
+                        break;
+                    }
+                }
+                keyChar = getKeyCharacter(target.id);
+            } catch (e) {
+                console.log('Error occurred: ' + e);
+            }
+        } else if (typeof arg === 'string') {
+            keyChar = arg;
+            targetID = document.querySelector(DOMStrings.bigKeyIdPrefix + arg).id;
+        }
+
+        return {
+            key: keyChar,
+            id: targetID
+        };
     };
 
     return {
         getDOMStrings: function() {
             return DOMStrings;
+        },
+        getkeyCharFromID: function(idSelector) {
+            return getKeyCharacter(idSelector);
+        },
+        getTargetElement: function(arg) {
+            return getTarget(arg);
+        },
+        toggleBGColor: function(target, eventType) {
+            var targetEle = document.getElementById(target.id);
+            if (eventType === 'mousedown' || eventType === 'keydown')  {
+                targetEle.style.backgroundColor = 'red';
+                targetEle.style.color = 'white';
+            } else if (eventType === 'mouseup' || eventType === 'keyup') {
+                targetEle.style.backgroundColor = 'white';
+                targetEle.style.color = 'black';
+            }
         }
     }
 })();
 
 // APP CONTROLLER
 var controller = (function(soundCtrl, UICtrl) {
+    var hasEventFired = false;
     var DOM = UICtrl.getDOMStrings();
-    var bigKey = document.querySelector(DOM.bigKeyBtn);
 
-    var setupEventListeners = function() {
-        bigKey.addEventListener('click', playSound);
-
-        document.addEventListener('keypress', function(e) {
-            if (e.keyCode === 100 || e.which === 100) {
-                playSound();
-            }
-        });
-
-        // Event listeners for color on mouse events
-        addEventListenerMulti(bigKey, 'mousedown mouseup', toggleBGColor);
-        addEventListenerMulti(document, 'keydown keyup', toggleBGColor);
+    // Define all keycodes
+    var keyCodes = {
+        Q: { keydown: 81, keypress: 113 },
+        W: { keydown: 87, keypress: 119 },
+        E: { keydown: 69, keypress: 101 },
+        A: { keydown: 65, keypress: 97 },
+        S: { keydown: 83, keypress: 115 },
+        D: { keydown: 68, keypress: 100 },
+        Z: { keydown: 90, keypress: 122 },
+        X: { keydown: 88, keypress: 120 },
+        C: { keydown: 67, keypress: 99 }
     };
 
-    var toggleBGColor = function(e) {
-        console.log(e.type);
+    var triggerBigKeyEvents = function(e) {
+        var keyCode, target;
 
-        if (e.type === 'mousedown' || e.type === 'keydown')  {
-            bigKey.style.backgroundColor = 'red';
-            bigKey.style.color = 'white';
-        } else if (e.type === 'mouseup' || e.type === 'keyup') {
-            bigKey.style.backgroundColor = 'white';
-            bigKey.style.color = 'black';
+        if (e.key) {
+            target = UICtrl.getTargetElement(e.key.toUpperCase());
+        } else {
+            target = UICtrl.getTargetElement(e);
         }
-    };
 
-    var playSound = function() {
-        // Play the drum sound.
-        var keyChar = document.querySelector(DOM.bigLetterLabel).textContent;
-        soundCtrl.playSound(keyChar);
-    };
-
-    function addEventListenerMulti(ele, eventNames, listenerCallback) {
-        var events = eventNames.split(' ');
-
-        for (var i = 0; i < events.length; i++) {
-            ele.addEventListener(events[i], listenerCallback);
+        if (e.type === 'click' || (e.type === 'keypress' && !hasEventFired)) {
+            soundCtrl.playFile(target.key);
+            //hasEventFired = true; // Disable to allow repeated notes
         }
-    }
+
+        if (e.type === 'keyup') {
+            hasEventFired = false;
+        }
+
+        UICtrl.toggleBGColor(target, e.type);
+    };
 
     return {
         init: function() {
-            setupEventListeners();
+            var bigKeys = document.querySelectorAll(DOM.bigKeyBtn);
+
+            var nodeListForEach  = function(list, callback) {
+                for (var i = 0; i < list.length; i++) {
+                    callback(list[i], i);
+                }
+            };
+
+            nodeListForEach(bigKeys, function(k) {
+                var keyChar = UICtrl.getkeyCharFromID(k.id);
+
+                setupEventListeners(k, k.id);
+
+                if (keyChar && keyCodes.hasOwnProperty(keyChar)) {
+                    document.getElementById(k.id).setAttribute(DOM.dataKeydownCode, keyCodes[keyChar].keydown);
+                    document.getElementById(k.id).setAttribute(DOM.dataKeypressCode, keyCodes[keyChar].keypress);
+                }
+            });
+
+            setupEventListeners(document);
+
+            function setupEventListeners(el, elId) {
+                if (elId) {
+                    el.addEventListener('click', triggerBigKeyEvents);
+                    el.addEventListener('mousedown', triggerBigKeyEvents);
+                    el.addEventListener('mouseup', triggerBigKeyEvents);
+                } else {
+                    el.addEventListener('keypress', triggerBigKeyEvents);
+                    el.addEventListener('keydown', triggerBigKeyEvents);
+                    el.addEventListener('keyup', triggerBigKeyEvents);
+                }
+
+            }
+
+            function addEventListenerMulti(ele, eventNames, listenerCallback) {
+                var events = eventNames.split(' ');
+
+                for (var i = 0; i < events.length; i++) {
+                    ele.addEventListener(events[i], listenerCallback);
+                }
+            }
+        },
+        testing: function() {
+            return keyCodes;
         }
     }
 })(soundController, UIController);

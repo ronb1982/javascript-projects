@@ -1,10 +1,44 @@
+body {
+    background: linear-gradient( rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.20) ), url(../img/dj.jpg) center/100% repeat-y;
+}
+
+.title, .grid {
+    font-family: Raleway;
+    padding-top: 30px;
+}
+
+.title {
+    text-align: center;
+    color: white;
+    text-shadow: 3px 3px black;
+    font-size: 30px;
+    letter-spacing: 3px;
+}
+.grid {
+    margin: auto;
+    width: 40%;
+    padding: 10px;
+    display: table;
+    border-spacing: 5px;
+}
+
+.row {
+    display: table-row;
+}
+
 .big__key {
+    background-color: white;
+    opacity: 0.6;
+    display: table-cell;
     border: 2px solid black;
     width: 150px;
     height: 100px;
     text-align: center;
     padding-top: 20px;
     margin-left: 30px;
+    -moz-box-shadow:    2px 2px 10px 2px black;
+    -webkit-box-shadow: 2px 2px 10px 2px black;
+    box-shadow:         2px 2px 10px 2px black;
 }
 
 .big__key--letter {
