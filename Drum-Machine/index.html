@@ -1,69 +1,90 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Drum Machine</title>
-        <link rel="stylesheet" href="css/main.css">
-        <link href="https://fonts.googleapis.com/css?family=Permanent+Marker|Raleway" rel="stylesheet">
-    </head>
-    <body>
-        <div class="container">
-            <!-- <audio id="loop-track" type="audio/wav"></audio> -->
-            <div class="title">Da Beatz Drum Machine</div>
-            <div class="grid">
-                <section>
-                    <div class="section__title">Hits</div>
-                    <div class="row">
-                        <div class="big__key big__key--inactive" id="big-key-Q">
-                            <div class="big__key--letter">Q</div>
-                            <div class="key__description">Kick Drum</div>
-                        </div>
-                        <div class="big__key big__key--inactive" id="big-key-W">
-                            <div class="big__key--letter">W</div>
-                            <div class="key__description">808 Drum</div>
-                        </div>
-                        <div class="big__key big__key--inactive" id="big-key-E">
-                            <div class="big__key--letter">E</div>
-                            <div class="key__description">Snare Drum</div>
-                        </div>
-                    </div>
-                </section>
-                <section>
-                    <div class="section__header">
-                        <span class="section__title">Loops</span>
-                        <span><button class="btn__loop-stop">STOP LOOP</button></span>
-                    </div>
-                    <div class="row">
-                        <div class="big__key big__key--inactive" id="big-key-A">
-                            <div class="big__key--letter">A</div>
-                            <div class="key__description">Bells 85 BPM</div>
-                        </div>
-                        <div class="big__key big__key--inactive" id="big-key-S">
-                            <div class="big__key--letter">S</div>
-                            <div class="key__description">Playboy 140 BPM</div>
-                        </div>
-                        <div class="big__key big__key--inactive" id="big-key-D">
-                            <div class="big__key--letter">D</div>
-                            <div class="key__description">FX</div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="big__key big__key--inactive" id="big-key-Z">
-                            <div class="big__key--letter">Z</div>
-                            <div class="key__description">Kick Drum</div>
-                        </div>
-                        <div class="big__key big__key--inactive" id="big-key-X">
-                            <div class="big__key--letter">X</div>
-                            <div class="key__description">Kick Drum</div>
-                        </div>
-                        <div class="big__key big__key--inactive" id="big-key-C">
-                            <div class="big__key--letter">C</div>
-                            <div class="key__description">Kick Drum</div>
-                        </div>
-                    </div>
-                </section>
+<head>
+    <meta charset="utf-8">
+    <title>Drum Machine</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Permanent+Marker|Raleway" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- <audio id="loop-track" type="audio/wav"></audio> -->
+        <div class="title">Da Beatz Drum Machine</div>
+        <div id="modal__box" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="close">&times;</span>
+                    <h2>The Coolest Practice <span class="font-highlight">Drum Machine</span> Ever</h2>
+                </div>
+                <div class="modal-body">
+                    <p>Need to practice some of your beat-making skills? Wanna avoid spending crazy cash on expensive drum machines?</p>
+                    <p>Try out this FREE drum machine tool developed by Levexa.</p>
+                </div>
+                <!--<div class="modal-footer">
+                    <h3>Modal Footer</h3>
+                </div>-->
             </div>
         </div>
-    </body>
-    <script src="scripts/script.js"></script>
+        <div class="grid">
+            <section>
+                <div class="section__title">Hits</div>
+                <div class="row">
+                    <div class="big__key big__key--inactive" id="big-key-Q">
+                        <div class="big__key--letter">Q</div>
+                        <div class="key__description">Kick Drum</div>
+                    </div>
+                    <div class="big__key big__key--inactive" id="big-key-W">
+                        <div class="big__key--letter">W</div>
+                        <div class="key__description">808 Drum</div>
+                    </div>
+                    <div class="big__key big__key--inactive" id="big-key-E">
+                        <div class="big__key--letter">E</div>
+                        <div class="key__description">Snare Drum</div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="section__header">
+                    <span class="section__title">Loops</span>
+                    <span>
+                        <button class="btn__loop-stop" id="stop-loop">
+                            <i class="fa fa-stop-circle"></i>  STOP LOOP
+                        </button>
+                    </span>
+                </div>
+                <div class="row">
+                    <div class="big__key big__key--inactive" id="big-key-A">
+                        <div class="big__key--letter">A</div>
+                        <div class="key__description">Bells 85 BPM</div>
+                    </div>
+                    <div class="big__key big__key--inactive" id="big-key-S">
+                        <div class="big__key--letter">S</div>
+                        <div class="key__description">Playboy 70 BPM</div>
+                    </div>
+                    <div class="big__key big__key--inactive" id="big-key-D">
+                        <div class="big__key--letter">D</div>
+                        <div class="key__description">Strings 140 BPM</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="big__key big__key--inactive" id="big-key-Z">
+                        <div class="big__key--letter">Z</div>
+                        <div class="key__description">Shaker 85 BPM</div>
+                    </div>
+                    <div class="big__key big__key--inactive" id="big-key-X">
+                        <div class="big__key--letter">X</div>
+                        <div class="key__description">Hi Hat 140 BPM</div>
+                    </div>
+                    <div class="big__key big__key--inactive" id="big-key-C">
+                        <div class="big__key--letter">C</div>
+                        <div class="key__description">Claps 140 BPM</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+<script src="scripts/script.js"></script>
 </html>
